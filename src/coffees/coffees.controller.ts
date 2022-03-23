@@ -5,7 +5,6 @@ import {
   Get,
   NotFoundException,
   Param,
-  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -15,6 +14,7 @@ import { CreateCoffeeDto } from './dto/create-coffee.dto';
 import { UpdateCoffeeDto } from './dto/update-coffee.dto';
 import { Public } from '../common/decorators/public.decorator';
 import { ApiTags } from '@nestjs/swagger';
+import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
 
 @ApiTags('coffees')
 @Controller('coffees')
@@ -23,13 +23,13 @@ export class CoffeesController {
 
   @Public()
   @Get()
-  findAll(@Query() paginationQuery) {
+  findAll(@Query() paginationQuery: PaginationQueryDto) {
     return this.coffeesService.findAll(paginationQuery);
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    const coffee = this.coffeesService.findOne('' + id);
+  findOne(@Param('id') id: string) {
+    const coffee = this.coffeesService.findOne(id);
     if (!coffee) {
       throw new NotFoundException(`Coffee #${id} not found`);
     }
